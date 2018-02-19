@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluggableCLI", "PluggableCLI\PluggableCLI.csproj", "{CFA0FDA8-4AF4-4563-AC15-3A94A92F249C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluggableCLI.TestConsole", "PluggableCLI.TestConsole\PluggableCLI.TestConsole.csproj", "{153CCE40-0D23-41D9-85D7-F664BED7907E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CFA0FDA8-4AF4-4563-AC15-3A94A92F249C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFA0FDA8-4AF4-4563-AC15-3A94A92F249C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFA0FDA8-4AF4-4563-AC15-3A94A92F249C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFA0FDA8-4AF4-4563-AC15-3A94A92F249C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{153CCE40-0D23-41D9-85D7-F664BED7907E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{153CCE40-0D23-41D9-85D7-F664BED7907E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{153CCE40-0D23-41D9-85D7-F664BED7907E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{153CCE40-0D23-41D9-85D7-F664BED7907E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BC5BA6B0-6254-4C9E-AB99-317FEBC478F0}
+	EndGlobalSection
+EndGlobal
