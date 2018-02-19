@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PluggableCLI.TestConsole
 {
@@ -10,6 +6,8 @@ namespace PluggableCLI.TestConsole
     {
         static void Main(string[] args)
         {
+            CLIProviders.Run(args);
+            Console.ReadLine();
         }
     }
 }
