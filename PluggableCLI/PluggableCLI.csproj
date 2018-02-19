@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppSetting.cs" />
+    <Compile Include="CLIInfoException.cs" />
     <Compile Include="CLIProvider.cs" />
     <Compile Include="CLIProviders.cs" />
     <Compile Include="ConnectionString.cs" />
