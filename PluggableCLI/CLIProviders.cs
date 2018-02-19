@@ -54,7 +54,7 @@ namespace PluggableCLI
                 return;
 
             ValidateUniqueNess(provider.ConnectionStrings.Select(p => p.Name.ToLowerInvariant()),
-                $"A connectionString in a  provider has to have a unique name. This is not the case with the connectionString {0} in {provider.Name}");
+                $"A connectionString in a  provider has to have a unique name. There is at least two called {{0}} in the {provider.Name} provider");
         }
         private static void ValidateUniqueAppSettingNames(List<ICLIProvider> providers)
         {
@@ -70,7 +70,7 @@ namespace PluggableCLI
                 return;
 
             ValidateUniqueNess(provider.AppSettings.Select(p => p.Name.ToLowerInvariant()),
-                $"An appSettings in a  provider has to have a unique name. This is not the case with the appSetting {0} in {provider.Name}");
+                $"An appSetting in a  provider has to have a unique name. There is at least two called {{0}} in the {provider.Name} provider");
         }
 
         private static void ValidateUniqueParameterNames(List<ICLIProvider> providers)
@@ -87,10 +87,10 @@ namespace PluggableCLI
                 return;
 
             ValidateUniqueNess(provider.Parameters.Select(p => p.ShortName.ToLowerInvariant()),
-                $"A parameter in a  provider has to have a unique name. This is not the case with the parameter {0} in {provider.Name}");
+                $"A parameter in a  provider has to have a unique name. There is at least two called {{0}} in the {provider.Name} provider");
 
             ValidateUniqueNess(provider.Parameters.Select(p => p.LongName.ToLowerInvariant()),
-                $"A parameter in a  provider has to have a unique name. This is not the case with the parameter {0} in {provider.Name}");
+                $"A parameter in a  provider has to have a unique name. There is at least two called {{0}} in the {provider.Name} provider");
         }
 
         private static void ValidateUniqueNess(IEnumerable<string> names, string errorMessageFormatTemplate)
@@ -112,7 +112,7 @@ namespace PluggableCLI
                 throw new CLIInfoException("No providers found");
 
             ValidateUniqueNess(providers.Select(p => p.Name.ToLowerInvariant()),
-                "A CLI provider has to have a unique name. This is not the case with {0}");
+                "A CLI provider has to have a unique name. There is at least two called {0}");
         }
     }
 }
