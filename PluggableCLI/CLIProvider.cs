@@ -5,6 +5,8 @@ namespace PluggableCLI
     public abstract class CLIProvider : ICLIProvider
     {
         public abstract string Verb { get; }
+        public abstract bool HasVerbArgument { get; }
+        public string VerbArgument { get; internal set; }
         public abstract List<Parameter> SetupParameters { get; }
         public abstract List<AppSetting> SetupAppSettings { get; }
         public abstract List<ConnectionString> SetupConnectionStrings { get; }

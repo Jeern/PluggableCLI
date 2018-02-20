@@ -7,6 +7,8 @@ namespace PluggableCLI
     public interface ICLIProvider
     {
         string Verb { get; }
+        bool HasVerbArgument { get; }
+        string VerbArgument { get; }
         List<Parameter> SetupParameters { get; }
         List<AppSetting> SetupAppSettings { get; }
         List<ConnectionString> SetupConnectionStrings { get; }

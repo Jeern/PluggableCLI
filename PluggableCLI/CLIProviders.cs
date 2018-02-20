@@ -1,8 +1,10 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace PluggableCLI
 {
@@ -12,18 +14,23 @@ namespace PluggableCLI
         {
             try
             {
-                var assemblyName = (executingAssembly ?? Assembly.GetExecutingAssembly()).GetName().Name;
+                var executeableName = GetExeName(executingAssembly);
 
                 var loader = new ProviderLoader();
                 var providers = loader.LoadAllProviders().ToList();
                 ValidateProviders(providers);
+
+                //Format = AssemblyName Verb Argument -extra=... -extra2=...
+                var arguments = CleanArguments(args);
+
+                CheckIfMainHelpTextShouldBeDisplayed(executeableName, arguments, providers);
 
                 foreach (var provider in providers)
                 {
                     provider.Handle();
                 }
 
-                Console.WriteLine(assemblyName);
+                Console.WriteLine(executeableName);
 
             }
             catch (CLIInfoException e)
@@ -35,6 +42,41 @@ namespace PluggableCLI
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        private static string GetExeName(Assembly executingAssembly)
+        {
+            if (executingAssembly != null)
+                return Path.GetFileNameWithoutExtension(executingAssembly.GetName().Name);
+
+            return Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location);
+        }
+
+        private static List<string> CleanArguments(string[] args)
+        {
+            return args.Select(a => a.ToLowerInvariant().Trim()).ToList();
+        }
+
+        private static void CheckIfMainHelpTextShouldBeDisplayed(string assemblyName, List<string> arguments, List<ICLIProvider> providers)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("Usage:");
+            sb.AppendLine(Columns($"  {assemblyName} help", "- displays this text"));
+            providers.Where(p => p.HasVerbArgument).ToList().ForEach(p => sb.AppendLine(Columns($"  {assemblyName} {p.Verb} <argument>", $"- Activates the {p.Verb} provider")));
+            providers.Where(p => !p.HasVerbArgument).ToList().ForEach(p => sb.AppendLine(Columns($"  {assemblyName} {p.Verb}", $"- Activates the {p.Verb} provider")));
+
+            //Main help should be displayed if the first verb is help or if none of the providers verb is chosen, or if 
+            //no arguments belong to a provider.
+            if (arguments == null || arguments.Count == 0 || arguments[0] == "help" ||
+                providers.All(p => p.Verb.ToLowerInvariant() != arguments[0]))
+                throw new CLIInfoException(sb.ToString());
+        }
+
+        private static string Columns(string col1, string col2)
+        {
+            const int posCol2 = 40;
+            const string spaces = "                                                                                          ";
+            return $"{col1}{spaces.Substring(0, Math.Max(1, posCol2 - col1.Length))}{col2}";
         }
 
         private static void ValidateProviders(List<ICLIProvider> providers)

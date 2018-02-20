@@ -6,6 +6,7 @@ namespace PluggableCLI.TestConsole
     public class CLITestProvider : CLIProvider
     {
         public override string Verb => "Test";
+        public override bool HasVerbArgument => false;
 
         public override List<Parameter> SetupParameters => new List<Parameter>
         {
