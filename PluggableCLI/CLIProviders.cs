@@ -18,6 +18,11 @@ namespace PluggableCLI
                 var providers = loader.LoadAllProviders().ToList();
                 ValidateProviders(providers);
 
+                foreach (var provider in providers)
+                {
+                    provider.Handle();
+                }
+
                 Console.WriteLine(assemblyName);
 
             }
@@ -50,11 +55,11 @@ namespace PluggableCLI
 
         private static void ValidateConnectionStringNames(ICLIProvider provider)
         {
-            if (provider.ConnectionStrings == null || provider.ConnectionStrings.Count == 0)
+            if (provider.SetupConnectionStrings == null || provider.SetupConnectionStrings.Count == 0)
                 return;
 
-            ValidateUniqueNess(provider.ConnectionStrings.Select(p => p.Name.ToLowerInvariant()),
-                $"A connectionString in a  provider has to have a unique name. There is at least two called {{0}} in the {provider.Name} provider");
+            ValidateUniqueNess(provider.SetupConnectionStrings.Select(p => p.Name.ToLowerInvariant()),
+                $"A connectionString in a  provider has to have a unique name. There is at least two called {{0}} in the {provider.Verb} provider");
         }
         private static void ValidateUniqueAppSettingNames(List<ICLIProvider> providers)
         {
@@ -66,11 +71,11 @@ namespace PluggableCLI
 
         private static void ValidateUniqueAppSettingNames(ICLIProvider provider)
         {
-            if (provider.AppSettings == null || provider.AppSettings.Count == 0)
+            if (provider.SetupAppSettings == null || provider.SetupAppSettings.Count == 0)
                 return;
 
-            ValidateUniqueNess(provider.AppSettings.Select(p => p.Name.ToLowerInvariant()),
-                $"An appSetting in a  provider has to have a unique name. There is at least two called {{0}} in the {provider.Name} provider");
+            ValidateUniqueNess(provider.SetupAppSettings.Select(p => p.Name.ToLowerInvariant()),
+                $"An appSetting in a  provider has to have a unique name. There is at least two called {{0}} in the {provider.Verb} provider");
         }
 
         private static void ValidateUniqueParameterNames(List<ICLIProvider> providers)
@@ -83,14 +88,14 @@ namespace PluggableCLI
 
         private static void ValidateUniqueParameterNames(ICLIProvider provider)
         {
-            if (provider.Parameters == null || provider.Parameters.Count == 0)
+            if (provider.SetupParameters == null || provider.SetupParameters.Count == 0)
                 return;
 
-            ValidateUniqueNess(provider.Parameters.Select(p => p.ShortName.ToLowerInvariant()),
-                $"A parameter in a  provider has to have a unique name. There is at least two called {{0}} in the {provider.Name} provider");
+            ValidateUniqueNess(provider.SetupParameters.Select(p => p.ShortName.ToLowerInvariant()),
+                $"A parameter in a  provider has to have a unique name. There is at least two called {{0}} in the {provider.Verb} provider");
 
-            ValidateUniqueNess(provider.Parameters.Select(p => p.LongName.ToLowerInvariant()),
-                $"A parameter in a  provider has to have a unique name. There is at least two called {{0}} in the {provider.Name} provider");
+            ValidateUniqueNess(provider.SetupParameters.Select(p => p.LongName.ToLowerInvariant()),
+                $"A parameter in a  provider has to have a unique name. There is at least two called {{0}} in the {provider.Verb} provider");
         }
 
         private static void ValidateUniqueNess(IEnumerable<string> names, string errorMessageFormatTemplate)
@@ -111,7 +116,7 @@ namespace PluggableCLI
             if(providers == null || providers.Count == 0)
                 throw new CLIInfoException("No providers found");
 
-            ValidateUniqueNess(providers.Select(p => p.Name.ToLowerInvariant()),
+            ValidateUniqueNess(providers.Select(p => p.Verb.ToLowerInvariant()),
                 "A CLI provider has to have a unique name. There is at least two called {0}");
         }
     }

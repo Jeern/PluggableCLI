@@ -47,6 +47,7 @@
     <Compile Include="CLIProvider.cs" />
     <Compile Include="CLIProviders.cs" />
     <Compile Include="ConnectionString.cs" />
+    <Compile Include="CLIValue.cs" />
     <Compile Include="ICLIProvider.cs" />
     <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
