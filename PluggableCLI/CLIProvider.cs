@@ -15,8 +15,10 @@ namespace PluggableCLI
         protected readonly dynamic AppSettings = new CLIValue();
         protected readonly dynamic ConnectionStrings = new CLIValue();
 
-        public void Handle()
+        public void Handle(string executableName, List<string> arguments)
         {
+
+
             Parameters.Test = "Egon";
             Parameters.LockForUpdates();
 
