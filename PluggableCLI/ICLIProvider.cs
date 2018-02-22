@@ -13,6 +13,6 @@ namespace PluggableCLI
         List<AppSetting> SetupAppSettings { get; }
         List<ConnectionString> SetupConnectionStrings { get; }
 
-        void Handle();
+        void Handle(string executeableName, List<string> arguments);
     }
 }
