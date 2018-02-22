@@ -64,8 +64,28 @@ namespace PluggableCLI
 
         private static List<string> CleanArguments(string[] args)
         {
-            return args.Select(a => a.ToLowerInvariant().Trim()).ToList();
+            var argList = args.Select(a => a.ToLowerInvariant().Trim()).ToList();
+            return CompressArguments(argList).ToList();
         }
+
+        private static IEnumerable<string> CompressArguments(List<string> args)
+        {
+            string prefix = string.Empty;
+            foreach (var arg in args)
+            {
+                if (arg == "-" || arg == "=")
+                {
+                    prefix = arg;
+                }
+                else 
+                {
+                    string val = $"{prefix}{arg}";
+                    prefix = string.Empty;
+                    yield return val;
+                }
+            }
+        }
+
 
         private static void CheckIfMainHelpTextShouldBeDisplayed(string assemblyName, List<string> arguments, List<ICLIProvider> providers)
         {
