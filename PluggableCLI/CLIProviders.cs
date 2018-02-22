@@ -25,13 +25,9 @@ namespace PluggableCLI
 
                 CheckIfMainHelpTextShouldBeDisplayed(executeableName, arguments, providers);
 
-                foreach (var provider in providers)
-                {
-                    provider.Handle();
-                }
-
-                Console.WriteLine(executeableName);
-
+                //Find specific provider
+                var relevantProvider = GetRelevantProvider(arguments[0], providers);
+                relevantProvider.Handle(executeableName, arguments);
             }
             catch (CLIInfoException e)
             {
@@ -42,6 +38,20 @@ namespace PluggableCLI
                 Console.WriteLine(e);
                 throw;
             }
+#if DEBUG
+            finally
+            {
+                Console.ReadLine();
+            }
+#endif
+        }
+
+        private static ICLIProvider GetRelevantProvider(string verb, List<ICLIProvider> providers)
+        {
+            var relevantProvider = providers.FirstOrDefault(p => p.Verb.ToLowerInvariant() == verb);
+            if (relevantProvider == null)
+                throw new CLIInfoException($"Something went wrong. {verb} provider not found");
+            return relevantProvider;
         }
 
         private static string GetExeName(Assembly executingAssembly)
