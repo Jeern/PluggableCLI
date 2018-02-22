@@ -7,7 +7,6 @@ namespace PluggableCLI.TestConsole
         static void Main(string[] args)
         {
             CLIProviders.Run(args);
-            Console.ReadLine();
         }
     }
 }
