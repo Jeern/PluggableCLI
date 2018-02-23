@@ -17,7 +17,11 @@ namespace PluggableCLI
 
         public void Handle(string executableName, List<string> arguments)
         {
-
+            //Step 1 - Read all AppSettings fail if any one missing + LockForUpdates
+            //Step 2 - Read all ConnectionString fail if any one missing + LockForUpdates
+            //Step 3 - Evalute Show Help
+            //Step 4 - Setup all Parameters (fail if any parameter not matching) + LockForUpdates
+            //Step 5 - Call execute
 
             Parameters.Test = "Egon";
             Parameters.LockForUpdates();
