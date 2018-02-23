@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -50,6 +51,7 @@
     <Compile Include="CLIValue.cs" />
     <Compile Include="ICLIProvider.cs" />
     <Compile Include="Parameter.cs" />
+    <Compile Include="CLIConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProviderLoader.cs" />
   </ItemGroup>

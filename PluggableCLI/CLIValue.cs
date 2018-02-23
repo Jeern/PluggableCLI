@@ -22,22 +22,16 @@ namespace PluggableCLI
             return false;
         }
 
-        private bool _lockedForUpdates;
-        internal void LockForUpdates()
+        internal void SetMember(string name, object value)
         {
-            _lockedForUpdates = true;
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name), "cannot be null");
+            _content.Add(name, value);
         }
-
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            string name = binder.Name;
-            if(_lockedForUpdates)
-                throw new CLIInfoException($"Sorry you cannot change Parameters, AppSettings or ConnectionStrings programmatically");
-            if(string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException(nameof(name), "cannot be null");
-            _content.Add(name, value);
-            return true;
+            throw new CLIInfoException($"Sorry you cannot change Parameters, AppSettings or ConnectionStrings programmatically");
         }
     }
 }

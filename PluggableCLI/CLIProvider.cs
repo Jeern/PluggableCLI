@@ -17,8 +17,12 @@ namespace PluggableCLI
 
         public void Handle(string executableName, List<string> arguments)
         {
-            //Step 1 - Read all AppSettings fail if any one missing + LockForUpdates
-            //Step 2 - Read all ConnectionString fail if any one missing + LockForUpdates
+            //Step 1 - Read all AppSettings fail if any one missing 
+            ReadAllAppSettings();
+
+            //Step 2 - Read all ConnectionString fail if any one missing
+            ReadAllConnectionStrings();
+
             //Step 3 - Evalute Show Help
             //Step 4 - Setup all Parameters (fail if any parameter not matching) + LockForUpdates
             //Step 5 - Call execute
@@ -28,6 +32,30 @@ namespace PluggableCLI
 
             //Diverse pre og evt. post checks
             Execute();
+        }
+
+        private void ReadAllAppSettings()
+        {
+            if(SetupAppSettings == null)
+                return;
+
+            foreach (var setupAppSetting in SetupAppSettings) 
+            {
+                string key = $"{Verb}:{setupAppSetting.Name}";
+                AppSettings.SetMember(setupAppSetting.Name, CLIConfig.ReadAppSetting(key, setupAppSetting.TypeConvert));
+            }
+        }
+
+        private void ReadAllConnectionStrings()
+        {
+            if (SetupConnectionStrings == null)
+                return;
+
+            foreach (var setupConnectionString in SetupConnectionStrings)
+            {
+                string key = $"{Verb}:{setupConnectionString.Name}";
+                AppSettings.SetMember(setupConnectionString.Name, CLIConfig.ReadConnectionString(key));
+            }
         }
 
         protected abstract void Execute();

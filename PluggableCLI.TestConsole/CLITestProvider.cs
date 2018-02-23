@@ -15,7 +15,7 @@ namespace PluggableCLI.TestConsole
 
         public override List<AppSetting> SetupAppSettings => new List<AppSetting>
         {
-            new AppSetting("Production", typeof(bool), "Is this production")
+            new AppSetting("Production", "Is this production", setting => Convert.ToBoolean(setting))
         };
 
         public override List<ConnectionString> SetupConnectionStrings => new List<ConnectionString>
