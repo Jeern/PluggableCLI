@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,10 +9,12 @@ namespace PluggableCLI
 {
     public class CLIProviders
     {
-        public static void Run(string[] args, Assembly executingAssembly = null)
+        public static void Run(Assembly executingAssembly = null)
         {
             try
             {
+                string argumentString = Environment.CommandLine;
+
                 var executeableName = GetExeName(executingAssembly);
 
                 var loader = new ProviderLoader();
@@ -21,7 +22,10 @@ namespace PluggableCLI
                 ValidateProviders(providers);
 
                 //Format = AssemblyName Verb Argument -extra=... -extra2=...
-                var arguments = CleanArguments(args);
+                var arguments = CleanArguments(argumentString);
+                
+                //First argument should be removed because it is just the filename of the console app
+                arguments.RemoveAt(0);
 
                 CheckIfMainHelpTextShouldBeDisplayed(executeableName, arguments, providers);
 
@@ -64,24 +68,43 @@ namespace PluggableCLI
             return Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location);
         }
 
-        private static List<string> CleanArguments(string[] args)
+        private static List<string> CleanArguments(string arguments)
         {
             //First we join all arguments this is mitigate things like Funky = "Hello" 3 arguments - instead of Funky="Hello" one argument.
-            string arguments = args == null ? string.Empty : string.Join(" ", args);
-            return RemovePlingsAndDoublePlings(
+            return SplitOnSpaceRespectingPlings(
                 RemoveExcessSpaces(arguments)
-                    .ToLowerInvariant()
-                    .Trim()
-                    .Split(' '))
+                    .Trim())
                 .ToList();
         }
 
-        private static IEnumerable<string> RemovePlingsAndDoublePlings(IEnumerable<string> arguments)
+        private static IEnumerable<string> SplitOnSpaceRespectingPlings(string arguments)
         {
-            foreach (var argument in arguments)
+            var sb = new StringBuilder();
+            bool inSingleQuotes = false;
+            bool inDoubleQuotes = false;
+            foreach (var cc in arguments.ToCharArray())
             {
-                yield return argument.Trim('\'', '"');
+                if (cc == ' ' && !inSingleQuotes && !inDoubleQuotes)
+                {
+                    string retVal = sb.ToString();
+                    sb = new StringBuilder();
+                    yield return retVal;
+                }
+                else if(cc == '\'')
+                {
+                    inSingleQuotes = !inSingleQuotes;
+                }
+                else if (cc == '"')
+                {
+                    inDoubleQuotes = !inDoubleQuotes;
+                }
+                else
+                {
+                    sb.Append(cc);
+                }
             }
+
+            yield return sb.ToString();
         }
 
         private static string RemoveExcessSpaces(string arguments)
