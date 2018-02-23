@@ -69,7 +69,7 @@ namespace PluggableCLI
                     {
                         sb.AppendLine($"      Usage: {parameter.LongName}=<number>");
                     }
-                    else if (parameter.ParameterType == typeof(int))
+                    else if (parameter.ParameterType == typeof(string))
                     {
                         sb.AppendLine($"      Usage: {parameter.LongName}=<somevalue>");
                     }
