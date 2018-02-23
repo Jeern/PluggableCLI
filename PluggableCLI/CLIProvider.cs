@@ -167,13 +167,15 @@ namespace PluggableCLI
                 try
                 {
                     var value = CLIConfig.ReadAppSetting(key, setupAppSetting.TypeConvert);
-                    if(value == null)
-                        throw new ArgumentException("value cannot be null");
                     AppSettings.SetMember(setupAppSetting.Name, value);
                 }
-                catch
+                catch(ArgumentNullException ex)
                 {
-                    throw new CLIInfoException($"The provider {Verb} must contain an AppSetting called {key}");
+                    throw new CLIInfoException($"The config file must contain an AppSetting called {key}", ex);
+                }
+                catch (Exception ex)
+                {
+                    throw new CLIInfoException($"The config has an AppSetting called {key} but it is probably of the wrong type", ex);
                 }
 
             }
@@ -194,9 +196,9 @@ namespace PluggableCLI
                         throw new ArgumentException("value cannot be null");
                     AppSettings.SetMember(setupConnectionString.Name, value);
                 }
-                catch
+                catch(Exception ex)
                 {
-                    throw new CLIInfoException($"The provider {Verb} must contain a ConnectionString called {key}");
+                    throw new CLIInfoException($"The config file must contain a ConnectionString called {key}", ex);
                 }
             }
         }
