@@ -194,7 +194,7 @@ namespace PluggableCLI
                     var value = CLIConfig.ReadConnectionString(key);
                     if (value == null)
                         throw new ArgumentException("value cannot be null");
-                    AppSettings.SetMember(setupConnectionString.Name, value);
+                    ConnectionStrings.SetMember(setupConnectionString.Name, value);
                 }
                 catch(Exception ex)
                 {
@@ -226,7 +226,7 @@ namespace PluggableCLI
                 }
                 else if (setupParameter.ParameterType == typeof(string))
                 {
-                    Parameters.SetMember(setupParameter.MemberName, DefaultValue<string>());
+                    Parameters.SetMember(setupParameter.MemberName, string.Empty);
                 }
             }
 
