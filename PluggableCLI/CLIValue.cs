@@ -13,6 +13,7 @@ namespace PluggableCLI
             string name = binder.Name;
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name), "cannot be null");
+            name = name.ToLowerInvariant();
             if (_content.ContainsKey(name))
             {
                 result = _content[name];
@@ -26,7 +27,15 @@ namespace PluggableCLI
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name), "cannot be null");
-            _content.Add(name, value);
+            name = name.ToLowerInvariant();
+            if (_content.ContainsKey(name))
+            {
+                _content[name] = value;
+            }
+            else
+            {
+                _content.Add(name.ToLowerInvariant(), value);
+            }
         }
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
