@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using PluggableCLI;
 
-namespace PluggableCLI.TestConsole
+namespace CLIDemo
 {
     public class CLITestProvider : CLIProvider
     {
@@ -25,9 +26,14 @@ namespace PluggableCLI.TestConsole
 
         protected override void Execute()
         {
-            Console.WriteLine(Parameters.Test);
-            Parameters.Test2 = "Fede";
-            
+            if (!AppSettings.Production)
+            {
+                Console.WriteLine(Parameters.Print);
+            }
+            else
+            {
+                Console.WriteLine("Print text is secret in production");
+            }
         }
     }
 }

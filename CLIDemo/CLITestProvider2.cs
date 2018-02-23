@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using PluggableCLI;
 
-namespace PluggableCLI.TestConsole
+namespace CLIDemo
 {
     public class CLITestProvider2 : CLIProvider
     {
@@ -18,13 +19,11 @@ namespace PluggableCLI.TestConsole
             new AppSetting("Production", typeof(bool), "Is this production")
         };
 
-        public override List<ConnectionString> SetupConnectionStrings => new List<ConnectionString>
-        {
-            new ConnectionString("TheDatabase", "Connectionstring to the database")
-        };
+        public override List<ConnectionString> SetupConnectionStrings => null;
 
         protected override void Execute()
         {
+            Console.WriteLine(VerbArgument);
         }
     }
 }

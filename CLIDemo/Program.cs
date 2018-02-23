@@ -1,12 +1,12 @@
-﻿using System;
+﻿using PluggableCLI;
 
-namespace PluggableCLI.TestConsole
+namespace CLIDemo
 {
     class Program
     {
         static void Main(string[] args)
         {
-            CLIProviders.Run(args);
+            CLIProviders.Run();
         }
     }
 }

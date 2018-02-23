@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{153CCE40-0D23-41D9-85D7-F664BED7907E}</ProjectGuid>
+    <ProjectGuid>{71127627-F750-407E-91E4-F1940B524B31}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>PluggableCLI.TestConsole</RootNamespace>
-    <AssemblyName>PluggableCLI.TestConsole</AssemblyName>
+    <RootNamespace>CLIDemo</RootNamespace>
+    <AssemblyName>CLIDemo</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -43,8 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CLITestProvider2.cs" />
     <Compile Include="CLITestProvider.cs" />
+    <Compile Include="CLITestProvider2.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
