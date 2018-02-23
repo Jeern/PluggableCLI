@@ -31,7 +31,7 @@ namespace PluggableCLI
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            throw new CLIInfoException($"Sorry you cannot change Parameters, AppSettings or ConnectionStrings programmatically");
+            throw new CLIInfoException($"Sorry you cannot change Parameters, AppSettings or ConnectionStrings programmatically. You tried with {binder.Name}.");
         }
     }
 }

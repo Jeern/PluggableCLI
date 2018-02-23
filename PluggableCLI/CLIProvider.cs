@@ -42,11 +42,11 @@ namespace PluggableCLI
             var sb = new StringBuilder();
             sb.AppendLine("Usage:");
             sb.AppendLine(Formatting.Columns($"  {executableName} {Verb} help", "- displays this text"));
-            string providerHelpText = ProviderHelpText ?? "- Activates the {Verb} provider";
+            string providerHelpText = ProviderHelpText ?? $"- Activates the {Verb} provider";
             if (HasVerbArgument)
             {
-                sb.AppendLine(Formatting.Columns($"  {executableName} {Verb} <argument>", providerHelpText));
-                sb.AppendLine($"  <argument> cannot start with -");
+                sb.AppendLine(Formatting.Columns($"  {executableName} {Verb} <verb argument>", providerHelpText));
+                sb.AppendLine($"    the special <verb argument> cannot start with -");
             }
             else
             {
