@@ -213,12 +213,20 @@ namespace PluggableCLI
                 VerbArgument = arguments[1];
             }
 
-            //First set all boolean values to false
+            //First set all values to default
             foreach (var setupParameter in SetupParameters)
             {
                 if (setupParameter.ParameterType == typeof(bool))
                 {
-                    Parameters.SetMember(setupParameter.MemberName, false);
+                    Parameters.SetMember(setupParameter.MemberName, DefaultValue<bool>());
+                }
+                else if (setupParameter.ParameterType == typeof(int))
+                {
+                    Parameters.SetMember(setupParameter.MemberName, DefaultValue<int>());
+                }
+                else if (setupParameter.ParameterType == typeof(string))
+                {
+                    Parameters.SetMember(setupParameter.MemberName, DefaultValue<string>());
                 }
             }
 
@@ -236,6 +244,10 @@ namespace PluggableCLI
             }
         }
 
+        private T DefaultValue<T>()
+        {
+            return default(T);
+        }
 
         protected abstract void Execute();
     }
