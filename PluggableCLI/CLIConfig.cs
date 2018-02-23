@@ -11,7 +11,7 @@ namespace PluggableCLI
         }
         public static string ReadConnectionString(string name)
         {
-            return ConfigurationManager.ConnectionStrings[name].ConnectionString;
+            return ConfigurationManager.ConnectionStrings[name]?.ConnectionString;
         }
     }
 }

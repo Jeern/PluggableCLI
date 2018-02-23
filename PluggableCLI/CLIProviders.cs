@@ -36,7 +36,9 @@ namespace PluggableCLI
             catch (Exception e)
             {
                 Console.WriteLine(e);
+#if !DEBUG
                 throw;
+#endif
             }
 #if DEBUG
             finally
@@ -66,7 +68,20 @@ namespace PluggableCLI
         {
             //First we join all arguments this is mitigate things like Funky = "Hello" 3 arguments - instead of Funky="Hello" one argument.
             string arguments = args == null ? string.Empty : string.Join(" ", args);
-            return RemoveExcessSpaces(arguments).ToLowerInvariant().Trim().Split(' ').ToList();
+            return RemovePlingsAndDoublePlings(
+                RemoveExcessSpaces(arguments)
+                    .ToLowerInvariant()
+                    .Trim()
+                    .Split(' '))
+                .ToList();
+        }
+
+        private static IEnumerable<string> RemovePlingsAndDoublePlings(IEnumerable<string> arguments)
+        {
+            foreach (var argument in arguments)
+            {
+                yield return argument.Trim('\'', '"');
+            }
         }
 
         private static string RemoveExcessSpaces(string arguments)
@@ -144,22 +159,15 @@ namespace PluggableCLI
         {
             var sb = new StringBuilder();
             sb.AppendLine("Usage:");
-            sb.AppendLine(Columns($"  {assemblyName} help", "- displays this text"));
-            providers.Where(p => p.HasVerbArgument).ToList().ForEach(p => sb.AppendLine(Columns($"  {assemblyName} {p.Verb} <argument>", $"- Activates the {p.Verb} provider")));
-            providers.Where(p => !p.HasVerbArgument).ToList().ForEach(p => sb.AppendLine(Columns($"  {assemblyName} {p.Verb}", $"- Activates the {p.Verb} provider")));
+            sb.AppendLine(Formatting.Columns($"  {assemblyName} help", "- displays this text"));
+            providers.Where(p => p.HasVerbArgument).ToList().ForEach(p => sb.AppendLine(Formatting.Columns($"  {assemblyName} {p.Verb} <argument>", $"- Activates the {p.Verb} provider")));
+            providers.Where(p => !p.HasVerbArgument).ToList().ForEach(p => sb.AppendLine(Formatting.Columns($"  {assemblyName} {p.Verb}", $"- Activates the {p.Verb} provider")));
 
             //Main help should be displayed if the first verb is help or if none of the providers verb is chosen, or if 
             //no arguments belong to a provider.
             if (arguments == null || arguments.Count == 0 || arguments[0] == "help" ||
                 providers.All(p => p.Verb.ToLowerInvariant() != arguments[0]))
                 throw new CLIInfoException(sb.ToString());
-        }
-
-        private static string Columns(string col1, string col2)
-        {
-            const int posCol2 = 40;
-            const string spaces = "                                                                                          ";
-            return $"{col1}{spaces.Substring(0, Math.Max(1, posCol2 - col1.Length))}{col2}";
         }
 
         private static void ValidateProviders(List<ICLIProvider> providers)

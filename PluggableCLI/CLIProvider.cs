@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace PluggableCLI
 {
@@ -7,6 +10,7 @@ namespace PluggableCLI
         public abstract string Verb { get; }
         public abstract bool HasVerbArgument { get; }
         public string VerbArgument { get; internal set; }
+        public virtual string ProviderHelpText { get; set; }
         public abstract List<Parameter> SetupParameters { get; }
         public abstract List<AppSetting> SetupAppSettings { get; }
         public abstract List<ConnectionString> SetupConnectionStrings { get; }
@@ -24,14 +28,132 @@ namespace PluggableCLI
             ReadAllConnectionStrings();
 
             //Step 3 - Evalute Show Help
-            //Step 4 - Setup all Parameters (fail if any parameter not matching) + LockForUpdates
+            CheckIfHelpTextShouldBeDisplayed(executableName, arguments);
+
+            //Step 4 - Setup all Parameters 
+            ReadAllParameters(arguments);
+
             //Step 5 - Call execute
-
-            Parameters.Test = "Egon";
-            Parameters.LockForUpdates();
-
-            //Diverse pre og evt. post checks
             Execute();
+        }
+
+        private void CheckIfHelpTextShouldBeDisplayed(string executableName, List<string> arguments)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("Usage:");
+            sb.AppendLine(Formatting.Columns($"  {executableName} {Verb} help", "- displays this text"));
+            string providerHelpText = ProviderHelpText ?? "- Activates the {Verb} provider";
+            if (HasVerbArgument)
+            {
+                sb.AppendLine(Formatting.Columns($"  {executableName} {Verb} <argument>", providerHelpText));
+                sb.AppendLine($"  <argument> cannot start with -");
+            }
+            else
+            {
+                sb.AppendLine(Formatting.Columns($"  {executableName} {Verb}", providerHelpText));
+            }
+
+            if (SetupParameters != null && SetupParameters.Count > 0)
+            {
+                sb.AppendLine("");
+                sb.AppendLine("Parameters:");
+                foreach (var parameter in SetupParameters)
+                {
+                    sb.AppendLine(Formatting.Columns($"    {parameter.ShortName} {parameter.LongName}",
+                        parameter.HelpText));
+                    if (parameter.ParameterType == typeof(bool))
+                    {
+                        sb.AppendLine($"      Usage: {parameter.LongName}");
+                    }
+                    else if(parameter.ParameterType == typeof(int))
+                    {
+                        sb.AppendLine($"      Usage: {parameter.LongName}=<number>");
+                    }
+                    else if (parameter.ParameterType == typeof(int))
+                    {
+                        sb.AppendLine($"      Usage: {parameter.LongName}=<somevalue>");
+                    }
+                }
+            }
+
+            string helpText = sb.ToString();
+
+            //Main help should be displayed 
+            //1. if the second argument is help or 
+            //2. if HasVerbArgument is true and the 2. argument is either not there or starts with -
+            //3. If one of the rest of the arguments is not in the allowed arguments of the provider (they all have to start with -)
+
+            //1
+            if(arguments.Count > 1 && arguments[1] == "help")
+                throw new CLIInfoException(helpText);
+
+            //2
+            if(HasVerbArgument && arguments.Count <= 1)
+                throw new CLIInfoException(helpText);
+
+            //2
+            if (HasVerbArgument && arguments.Count > 1 && arguments[1].StartsWith("-"))
+                throw new CLIInfoException(helpText);
+
+            //3
+            int firstArgumentIdx = HasVerbArgument ? 2 : 1;
+            if (arguments.Count > firstArgumentIdx)
+            {
+                for (int idx = firstArgumentIdx; idx < arguments.Count; idx++)
+                {
+                    if(SetupParameters == null || 
+                       (SetupParameters.All(a => a.ShortName != ArgumentNameTrueToType(a, arguments[idx], helpText)) && 
+                        SetupParameters.All(a => a.LongName != ArgumentNameTrueToType(a, arguments[idx], helpText))))
+                        throw new CLIInfoException(helpText);
+                }
+            }
+        }
+
+        private string ArgumentNameTrueToType(Parameter parameter, string argument, string helpText = null)
+        {
+            if (parameter.ParameterType == typeof(bool))
+                return argument;
+
+            int equalPos = argument.IndexOf("=", StringComparison.InvariantCulture);
+            if (equalPos < 0)
+            {
+                if(string.IsNullOrWhiteSpace(helpText))
+                    throw new ArgumentException("Something wrong with parameters in ArgumentNameTrueToType");
+                throw new CLIInfoException(helpText);
+            }
+            return argument.Substring(0, equalPos);
+        }
+
+        private object ArgumentValue(Parameter parameter, string argument)
+        {
+            if (parameter.ParameterType == typeof(bool))
+                return ArgumentValueBool(argument);
+            if (parameter.ParameterType == typeof(int))
+                return ArgumentValueInt(argument);
+            if (parameter.ParameterType == typeof(string))
+                return ArgumentValueString(argument);
+            throw new ArgumentException("Something wrong with parameters in ArgumentValue");
+        }
+
+        private string ArgumentValueString(string argument)
+        {
+            int equalPos = argument.IndexOf("=", StringComparison.InvariantCulture);
+            if (equalPos < 0)
+                throw new ArgumentException("Something wrong with parameters in ArgumentValueString");
+            return argument.Substring(equalPos+1);
+        }
+
+        private int ArgumentValueInt(string argument)
+        {
+            int equalPos = argument.IndexOf("=", StringComparison.InvariantCulture);
+            if (equalPos < 0)
+                throw new ArgumentException("Something wrong with parameters in ArgumentNameValueInt");
+            return Convert.ToInt32(argument.Substring(equalPos + 1));
+        }
+
+        private bool ArgumentValueBool(string argument)
+        {
+            return true;
         }
 
         private void ReadAllAppSettings()
@@ -42,7 +164,18 @@ namespace PluggableCLI
             foreach (var setupAppSetting in SetupAppSettings) 
             {
                 string key = $"{Verb}:{setupAppSetting.Name}";
-                AppSettings.SetMember(setupAppSetting.Name, CLIConfig.ReadAppSetting(key, setupAppSetting.TypeConvert));
+                try
+                {
+                    var value = CLIConfig.ReadAppSetting(key, setupAppSetting.TypeConvert);
+                    if(value == null)
+                        throw new ArgumentException("value cannot be null");
+                    AppSettings.SetMember(setupAppSetting.Name, value);
+                }
+                catch
+                {
+                    throw new CLIInfoException($"The provider {Verb} must contain an AppSetting called {key}");
+                }
+
             }
         }
 
@@ -54,9 +187,53 @@ namespace PluggableCLI
             foreach (var setupConnectionString in SetupConnectionStrings)
             {
                 string key = $"{Verb}:{setupConnectionString.Name}";
-                AppSettings.SetMember(setupConnectionString.Name, CLIConfig.ReadConnectionString(key));
+                try
+                {
+                    var value = CLIConfig.ReadConnectionString(key);
+                    if (value == null)
+                        throw new ArgumentException("value cannot be null");
+                    AppSettings.SetMember(setupConnectionString.Name, value);
+                }
+                catch
+                {
+                    throw new CLIInfoException($"The provider {Verb} must contain a ConnectionString called {key}");
+                }
             }
         }
+
+        private void ReadAllParameters(List<string> arguments)
+        {
+            if(SetupParameters == null)
+                return;
+
+            if (HasVerbArgument)
+            {
+                VerbArgument = arguments[1];
+            }
+
+            //First set all boolean values to false
+            foreach (var setupParameter in SetupParameters)
+            {
+                if (setupParameter.ParameterType == typeof(bool))
+                {
+                    Parameters.SetMember(setupParameter.MemberName, false);
+                }
+            }
+
+            int firstArgumentIdx = HasVerbArgument ? 2 : 1;
+            if (arguments.Count > firstArgumentIdx)
+            {
+                for (int idx = firstArgumentIdx; idx < arguments.Count; idx++)
+                {
+                    var setupParameter =
+                        SetupParameters.FirstOrDefault(a => a.ShortName == ArgumentNameTrueToType(a, arguments[idx])) ??
+                        SetupParameters.FirstOrDefault(a => a.LongName == ArgumentNameTrueToType(a, arguments[idx]));
+
+                    Parameters.SetMember(setupParameter.MemberName, ArgumentValue(setupParameter, arguments[idx]));
+                }
+            }
+        }
+
 
         protected abstract void Execute();
     }
