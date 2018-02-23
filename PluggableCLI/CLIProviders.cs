@@ -64,29 +64,82 @@ namespace PluggableCLI
 
         private static List<string> CleanArguments(string[] args)
         {
-            var argList = args.Select(a => a.ToLowerInvariant().Trim()).ToList();
-            return CompressArguments(argList).ToList();
+            //First we join all arguments this is mitigate things like Funky = "Hello" 3 arguments - instead of Funky="Hello" one argument.
+            string arguments = args == null ? string.Empty : string.Join(" ", args);
+            return RemoveExcessSpaces(arguments).ToLowerInvariant().Trim().Split(' ').ToList();
         }
 
-        private static IEnumerable<string> CompressArguments(List<string> args)
+        private static string RemoveExcessSpaces(string arguments)
         {
-            string prefix = string.Empty;
-            foreach (var arg in args)
+            return new string(RemoveExcessSpaces(arguments.ToCharArray()).ToArray());
+        }
+
+        private static IEnumerable<char> RemoveExcessSpaces(char[] arguments)
+        {
+            bool inSingleQuotes = false;
+            bool inDoubleQuotes = false;
+            int prevIdx = -1;
+            for (int idx = 0; idx < arguments.Length; idx++)
             {
-                if (arg == "-" || arg == "=")
+                //cc = current char
+                char cc = arguments[idx];
+                //nc = next char
+                char nc = idx < arguments.Length - 1
+                    ? arguments[idx + 1]
+                    : '%'; //% is just a random char other than '-', '=' and ' '  does not matter
+                //pc = previous char
+                char pc = idx > 0
+                    ? arguments[prevIdx]
+                    : '%'; //% is just a random char other than '-', '=' and ' '  does not matter
+                if (inSingleQuotes && cc == '\'')
                 {
-                    prefix = arg;
+                    inSingleQuotes = false;
+                    prevIdx = idx;
+                    yield return cc;
                 }
-                else 
+                else if (inSingleQuotes)
                 {
-                    string val = $"{prefix}{arg}";
-                    prefix = string.Empty;
-                    yield return val;
+                    prevIdx = idx;
+                    yield return cc;
+                }
+                else if (cc == '\'')
+                {
+                    inSingleQuotes = true;
+                    prevIdx = idx;
+                    yield return cc;
+                }
+                else if (inDoubleQuotes && cc == '"')
+                {
+                    inDoubleQuotes = false;
+                    prevIdx = idx;
+                    yield return cc;
+                }
+                else if (inDoubleQuotes)
+                {
+                    prevIdx = idx;
+                    yield return cc;
+                }
+                else if (cc == '"')
+                {
+                    inDoubleQuotes = true;
+                    prevIdx = idx;
+                    yield return cc;
+                }
+                else if (cc == ' ' && nc == ' ')
+                    continue;
+                else if (cc == ' ' && nc == '=')
+                    continue;
+                else if (pc == '=' && cc == ' ')
+                    continue;
+                else if (pc == '-' && cc == ' ')
+                    continue;
+                else
+                {
+                    prevIdx = idx;
+                    yield return cc;
                 }
             }
         }
-
-
         private static void CheckIfMainHelpTextShouldBeDisplayed(string assemblyName, List<string> arguments, List<ICLIProvider> providers)
         {
             var sb = new StringBuilder();
