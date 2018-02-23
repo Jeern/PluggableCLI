@@ -6,7 +6,7 @@ namespace CLIDemo
 {
     public class CLITestProvider2 : CLIProvider
     {
-        public override string Verb => "test2";
+        public override string Verb => "Test2";
         public override bool HasVerbArgument => true;
 
         public override List<Parameter> SetupParameters => new List<Parameter>
@@ -18,8 +18,6 @@ namespace CLIDemo
         {
             new AppSetting("Production", typeof(bool), "Is this production")
         };
-
-        public override List<ConnectionString> SetupConnectionStrings => null;
 
         protected override void Execute()
         {

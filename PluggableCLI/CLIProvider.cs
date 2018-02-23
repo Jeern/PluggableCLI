@@ -11,9 +11,9 @@ namespace PluggableCLI
         public abstract bool HasVerbArgument { get; }
         public string VerbArgument { get; internal set; }
         public virtual string ProviderHelpText { get; set; }
-        public abstract List<Parameter> SetupParameters { get; }
-        public abstract List<AppSetting> SetupAppSettings { get; }
-        public abstract List<ConnectionString> SetupConnectionStrings { get; }
+        public virtual List<Parameter> SetupParameters => null;
+        public virtual List<AppSetting> SetupAppSettings => null;
+        public virtual List<ConnectionString> SetupConnectionStrings => null;
 
         protected readonly dynamic Parameters = new CLIValue();
         protected readonly dynamic AppSettings = new CLIValue();
