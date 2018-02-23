@@ -195,10 +195,17 @@ namespace PluggableCLI
 
         private static void ValidateProviders(List<ICLIProvider> providers)
         {
+            ValidateNoneEmptyNames(providers);
             ValidateUniqueNames(providers);
             ValidateUniqueParameterNames(providers);
             ValidateUniqueAppSettingNames(providers);
             ValidateConnectionStringNames(providers);
+        }
+
+        private static void ValidateNoneEmptyNames(List<ICLIProvider> providers)
+        {
+            if(providers.Any(p => string.IsNullOrWhiteSpace(p.Verb)))
+                throw new ArgumentException("A provider cannot have an empty verb");
         }
 
         private static void ValidateConnectionStringNames(List<ICLIProvider> providers)
@@ -262,7 +269,7 @@ namespace PluggableCLI
             foreach (var name in names)
             {
                 if (hashSet.Contains(name))
-                    throw new CLIInfoException(string.Format(errorMessageFormatTemplate, name));
+                    throw new ArgumentException(string.Format(errorMessageFormatTemplate, name));
                 hashSet.Add(name);
             }
         }
@@ -270,7 +277,7 @@ namespace PluggableCLI
         private static void ValidateUniqueNames(List<ICLIProvider> providers)
         {
             if(providers == null || providers.Count == 0)
-                throw new CLIInfoException("No providers found");
+                throw new ArgumentException("No providers found");
 
             ValidateUniqueNess(providers.Select(p => p.Verb.ToLowerInvariant()),
                 "A CLI provider has to have a unique name. There is at least two called {0}");
