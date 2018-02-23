@@ -14,7 +14,6 @@ namespace PluggableCLI
 
         public IEnumerable<ICLIProvider> LoadAllProviders()
         {
-            Console.WriteLine(Directory.GetCurrentDirectory());
             var directoryCatalog = new DirectoryCatalog(Directory.GetCurrentDirectory(), "*.*");
             using (var container = new CompositionContainer(directoryCatalog, true))
             {
