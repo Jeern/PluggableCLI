@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckoutProvider.cs" />
     <Compile Include="CLITestProvider.cs" />
     <Compile Include="CLITestProvider2.cs" />
     <Compile Include="Program.cs" />
