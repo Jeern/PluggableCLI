@@ -189,7 +189,7 @@ namespace PluggableCLI
             //Main help should be displayed if the first verb is help or if none of the providers verb is chosen, or if 
             //no arguments belong to a provider.
             if (arguments == null || arguments.Count == 0 || arguments[0] == "help" ||
-                providers.All(p => p.Verb.ToLowerInvariant() != arguments[0]))
+                providers.All(p => p.Verb.ToLowerInvariant() != arguments[0].ToLowerInvariant()))
                 throw new CLIInfoException(sb.ToString());
         }
 
