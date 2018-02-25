@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package >
+	<metadata>
+		<id>$id$</id>
+	<version>$version$</version>
+		<title>PluggableCLI</title>
+		<description>Create CLIs with incredible ease</description>
+		<authors>Jesper Niedermann</authors>
+		<owners>Jesper Niedermann</owners>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<releaseNotes>Initial release.</releaseNotes>
+		<copyright>Copyright 2018</copyright>
+		<tags>CLI Console Plugin Provider Config Parameter</tags>
+	</metadata>
+</package>
