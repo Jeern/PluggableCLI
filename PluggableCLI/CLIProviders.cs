@@ -54,7 +54,7 @@ namespace PluggableCLI
 
         private static ICLIProvider GetRelevantProvider(string verb, List<ICLIProvider> providers)
         {
-            var relevantProvider = providers.FirstOrDefault(p => p.Verb.ToLowerInvariant() == verb);
+            var relevantProvider = providers.FirstOrDefault(p => p.Verb.ToLowerInvariant() == verb.ToLowerInvariant());
             if (relevantProvider == null)
                 throw new CLIInfoException($"Something went wrong. {verb} provider not found");
             return relevantProvider;
