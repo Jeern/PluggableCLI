@@ -2,7 +2,11 @@
 
 Yeah, it is pretty old school using the full .NET framework and MEF to create CLI's with incredible ease.
 
-Just Create a Console App using the Visual Studio template. Add The Nuget package (not published but will be shortly)
+Just Create a Console App using the Visual Studio template. Add The Nuget package
+
+```
+Install-Package PluggableCLI
+```
 
 And create an implementation of the abstract class CLIProvider for each verb in your application.
 
