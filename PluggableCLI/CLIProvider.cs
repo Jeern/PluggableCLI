@@ -205,13 +205,13 @@ namespace PluggableCLI
 
         private void ReadAllParameters(List<string> arguments)
         {
-            if(SetupParameters == null)
-                return;
-
             if (HasVerbArgument)
             {
                 VerbArgument = arguments[1];
             }
+
+            if (SetupParameters == null)
+                return;
 
             //First set all values to default
             foreach (var setupParameter in SetupParameters)
