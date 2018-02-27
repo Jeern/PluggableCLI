@@ -163,19 +163,18 @@ namespace PluggableCLI
 
             foreach (var setupAppSetting in SetupAppSettings) 
             {
-                string key = $"{Verb}:{setupAppSetting.Name}";
                 try
                 {
-                    var value = CLIConfig.ReadAppSetting(key, setupAppSetting.TypeConvert);
+                    var value = CLIConfig.ReadAppSetting(setupAppSetting.Name, setupAppSetting.TypeConvert);
                     AppSettings.SetMember(setupAppSetting.Name, value);
                 }
                 catch(ArgumentNullException ex)
                 {
-                    throw new CLIInfoException($"The config file must contain an AppSetting called {key}", ex);
+                    throw new CLIInfoException($"The config file must contain an AppSetting called {setupAppSetting.Name}", ex);
                 }
                 catch (Exception ex)
                 {
-                    throw new CLIInfoException($"The config has an AppSetting called {key} but it is probably of the wrong type", ex);
+                    throw new CLIInfoException($"The config has an AppSetting called {setupAppSetting.Name} but it is probably of the wrong type", ex);
                 }
 
             }
@@ -188,17 +187,16 @@ namespace PluggableCLI
 
             foreach (var setupConnectionString in SetupConnectionStrings)
             {
-                string key = $"{Verb}:{setupConnectionString.Name}";
                 try
                 {
-                    var value = CLIConfig.ReadConnectionString(key);
+                    var value = CLIConfig.ReadConnectionString(setupConnectionString.Name);
                     if (value == null)
                         throw new ArgumentException("value cannot be null");
                     ConnectionStrings.SetMember(setupConnectionString.Name, value);
                 }
                 catch(Exception ex)
                 {
-                    throw new CLIInfoException($"The config file must contain a ConnectionString called {key}", ex);
+                    throw new CLIInfoException($"The config file must contain a ConnectionString called {setupConnectionString.Name}", ex);
                 }
             }
         }
