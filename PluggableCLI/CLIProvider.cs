@@ -115,13 +115,9 @@ namespace PluggableCLI
                 return argument;
 
             int equalPos = argument.IndexOf("=", StringComparison.InvariantCulture);
-            if (equalPos < 0)
-            {
-                if(string.IsNullOrWhiteSpace(helpText))
-                    throw new ArgumentException("Something wrong with parameters in ArgumentNameTrueToType");
-                throw new CLIInfoException(helpText);
-            }
-            return argument.Substring(0, equalPos);
+            if (equalPos >= 0)
+                return argument.Substring(0, equalPos);
+            return null;
         }
 
         private object ArgumentValue(Parameter parameter, string argument)
