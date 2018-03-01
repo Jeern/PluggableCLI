@@ -8,7 +8,7 @@
 		<authors>Jesper Niedermann</authors>
 		<owners>Jesper Niedermann</owners>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<releaseNotes>Removed prefix requirement on AppSettings and ConnectionStrings</releaseNotes>
+		<releaseNotes>Fixed Bug. It only worked with one parameter</releaseNotes>
 		<copyright>Copyright 2018</copyright>
 		<tags>CLI Console Plugin Provider Config Parameter</tags>
 	</metadata>
